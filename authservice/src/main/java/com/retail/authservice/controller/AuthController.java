@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/auth")
+//@RequestMapping("/auth")
 public class AuthController {
     @Autowired
     JWTUtil jwtUtil;
@@ -26,7 +26,7 @@ public class AuthController {
         return ResponseEntity.ok(userRepository.findAll());
     }
 
-    @PostMapping("/login")
+    @PostMapping("/auth/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request){
         User user = userRepository.findByUsername(request.getUsername());
         if(!user.getPassword().equals(request.getPassword())){
@@ -38,7 +38,7 @@ public class AuthController {
         return ResponseEntity.ok(token);
     }
 
-    @PostMapping("/register")
+    @PostMapping("/auth/register")
     public ResponseEntity<?> register(@RequestBody User user){
         User saved = userRepository.save(user);
         return ResponseEntity.ok(saved);
