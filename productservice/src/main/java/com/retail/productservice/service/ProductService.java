@@ -5,10 +5,12 @@ import com.retail.productservice.dto.ProductQuantityDTO;
 import com.retail.productservice.entity.Product;
 import com.retail.productservice.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -50,5 +52,23 @@ public class ProductService {
                         .orElseThrow(() -> new RuntimeException("Product not found with name: " + productDTO.getName()));
         productRepository.delete(product);
         return product;
+    }
+
+    public ProductDTO getProductById(Long id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+        return new ProductDTO(product.getId(), product.getName(), product.getPrice(), product.getQuantity());
+    }
+
+    public void decrementQuantity(Long productId, int quantity) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found"));
+
+        if (product.getQuantity() < quantity) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not enough stock");
+        }
+
+        product.setQuantity(product.getQuantity() - quantity);
+        productRepository.save(product);
     }
 }

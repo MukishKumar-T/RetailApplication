@@ -1,17 +1,17 @@
-package com.retail.productservice.dto;
+package com.retail.authservice.dto;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class ProductDTO {
+public class UserDTO {
     private long id;
-    private String name;
-    private double price;
-    private int quantity;
+    private String username;
 }

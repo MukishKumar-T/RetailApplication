@@ -38,4 +38,18 @@ public class ProductController {
     public ResponseEntity<Product> removeProduct(@RequestBody ProductDTO productDTO){
         return ResponseEntity.status(HttpStatus.OK).body(productService.removeProduct(productDTO));
     }
+
+    // Get product by ID
+    @GetMapping("/{id}")
+    public ResponseEntity<ProductDTO> getProductById(@PathVariable Long id) {
+        ProductDTO product = productService.getProductById(id);
+        return ResponseEntity.ok(product);
+    }
+
+    // Decrement product quantity
+    @PostMapping("/decrement")
+    public ResponseEntity<Void> decrementQuantity(@RequestBody ProductQuantityDTO dto) {
+        productService.decrementQuantity(dto.getProductId(), dto.getQuantity());
+        return ResponseEntity.ok().build();
+    }
 }
