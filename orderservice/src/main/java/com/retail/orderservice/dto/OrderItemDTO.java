@@ -1,4 +1,4 @@
-package com.retail.productservice.dto;
+package com.retail.orderservice.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,9 +9,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class ProductDTO {
-    private long id;
-    private String name;
-    private double price;
+public class OrderItemDTO {
+    private long orderId;
+    private long productId;
     private int quantity;
 }

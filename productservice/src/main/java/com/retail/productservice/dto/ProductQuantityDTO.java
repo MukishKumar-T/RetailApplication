@@ -10,6 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ProductQuantityDTO {
+    private long productId;
     private String name;
     private int quantity;
     private boolean add;

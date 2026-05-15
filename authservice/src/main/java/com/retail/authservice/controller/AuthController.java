@@ -1,6 +1,7 @@
 package com.retail.authservice.controller;
 
 import com.retail.authservice.dto.LoginRequest;
+import com.retail.authservice.dto.UserDTO;
 import com.retail.authservice.entity.User;
 import com.retail.authservice.repository.UserRepository;
 import com.retail.authservice.util.JWTUtil;
@@ -8,12 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-//@RequestMapping("/auth")
+@RequestMapping("/auth")
 public class AuthController {
     @Autowired
     JWTUtil jwtUtil;
@@ -26,19 +28,27 @@ public class AuthController {
         return ResponseEntity.ok(userRepository.findAll());
     }
 
-    @PostMapping("/auth/login")
+    @GetMapping("/me")
+    public ResponseEntity<UserDTO> getCurrentUser(Authentication authentication) {
+        User user = userRepository.findByUsername(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return ResponseEntity.ok(new UserDTO(user.getId(), user.getUsername()));
+    }
+
+    @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request){
-        User user = userRepository.findByUsername(request.getUsername());
+        User user = userRepository.findByUsername(request.getUsername())
+                .orElseThrow(() -> new RuntimeException("User Not Found!"));
         if(!user.getPassword().equals(request.getPassword())){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        String token = jwtUtil.generateToken(user.getUsername());
+        String token = jwtUtil.generateToken(user.getUsername(), user.getId());
 
         return ResponseEntity.ok(token);
     }
 
-    @PostMapping("/auth/register")
+    @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user){
         User saved = userRepository.save(user);
         return ResponseEntity.ok(saved);
