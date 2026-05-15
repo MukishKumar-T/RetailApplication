@@ -2,6 +2,7 @@ package com.retail.authservice.util;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -11,8 +12,14 @@ import java.util.Date;
 
 @Component
 public class JWTUtil {
-    private static final String Secret = "ASuperSimpleSecretKeyForTheRetailApplication!";
-    private static final Key key = Keys.hmacShaKeyFor(Secret.getBytes());
+    @Value("${SECRET}")
+    private String Secret;
+
+    private final Key key;
+
+    public JWTUtil(@Value("${SECRET}") String secret) {
+        this.key = Keys.hmacShaKeyFor(secret.getBytes());
+    }
 
     public String generateToken(String username, long userId){
         return Jwts.builder()
