@@ -14,13 +14,23 @@ public class JWTUtil {
     private static final String Secret = "ASuperSimpleSecretKeyForTheRetailApplication!";
     private static final Key key = Keys.hmacShaKeyFor(Secret.getBytes());
 
-    public String generateToken(String username){
+    public String generateToken(String username, long userId){
         return Jwts.builder()
                 .setSubject(username)
+                .claim("userId", userId)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
                 .signWith(key)
                 .compact();
+    }
+
+    public Long extractUserId(String token){
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("userId", Long.class);
     }
 
     public String extractUsername(String token){
